@@ -28,23 +28,50 @@ class ArticlesController extends Controller
     public function create()
     {
         //shows a view to create a new resource
-
+        return view('articles.create');
     }
 
     public function store()
     {
+        request()->validate([
+            'title' => ['required', 'min:3', 'max:255'],
+            'excerpt' => 'required',
+            'body' => 'required'
+        ]);
         //Persist the new resource
+        $article = new Article();
 
+        $article->title = \request('title');
+        $article->excerpt = \request('excerpt');
+        $article->body = \request('body');
+
+        $article->save();
+        return redirect('/articles');
     }
 
-    public function edit()
+    public function edit($id)
     {
-
+        $article = Article::find($id);
+        return view('articles.edit', [
+            'article' => $article,
+        ]);
     }
 
-    public function update()
+    public function update($id)
     {
+        request()->validate([
+            'title' => ['required', 'min:3', 'max:255'],
+            'excerpt' => 'required',
+            'body' => 'required'
+        ]);
 
+        $article = Article::find($id);
+        $article->title = \request('title');
+        $article->excerpt = \request('excerpt');
+        $article->body = \request('body');
+
+        $article->save();
+        return redirect('/articles/' . $article->id);
     }
 
     public function destroy()
